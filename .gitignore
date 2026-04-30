@@ -1,0 +1,325 @@
+# Dependências do Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Logs gerais
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Diretório de cobertura de testes
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Build outputs
+build/
+dist/
+out/
+
+# Arquivos de backup
+*.bak
+*.backup
+*.old
+
+# Arquivos de lock do package.json
+package-lock.json
+yarn.lock
+
+# Arquivos de configuração local
+config/local.js
+config/local.json
+config/local.yml
+config/local.yaml
+
+# Logs de aplicação
+logs/
+*.log
+
+# Banco de dados locais
+*.db
+*.sqlite
+*.sqlite3
+
+# Chaves de API e segredos
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+secrets/
+credentials/
+api-keys/
+private-keys/
+
+# Variáveis de ambiente específicas
+.env.api
+.env.database
+.env.auth
+.env.stripe
+.env.firebase
+.env.aws
+.env.azure
+.env.openai
+.env.anthropic
+.env.google
+.env.meta
+.env.mistral
+.env.xai
+
+# Arquivos de upload e mídia
+uploads/
+media/
+static/uploads/
+public/uploads/
+
+# Cache do navegador
+.cache/
+.parcel-cache/
+.vite/
+
+# Relatórios e análises
+coverage/
+reports/
+test-results/
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Kubernetes
+*.kubeconfig
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# CI/CD
+.github/workflows/secret-*
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+
+# Ferramentas de desenvolvimento
+.nyc_output
+.coverage
+.jest
+
+# Arquivos de sistema
+*.tmp
+*.temp
+
+# Documentação gerada
+docs/build/
+docs/dist/
+
+# Arquivos de configuração sensíveis
+config/production.json
+config/staging.json
+config/development.json
+config/local.json
+
+# Logs de servidor
+access.log
+error.log
+combined.log
+
+# Arquivos de backup do banco de dados
+*.sql.gz
+*.dump
+
+# Certificados SSL
+*.crt
+*.cert
+*.ca-bundle
+
+# Arquivos de configuração de proxy
+proxy.conf.js
+proxy.config.json
+
+# Segurança: Arquivos que podem conter informações sensíveis
+**/config/secrets.js
+**/config/keys.js
+**/config/database.js
+**/config/auth.js
+**/config/payment.js
+**/config/email.js
+
+# Arquivos de teste sensíveis
+**/test/secrets.js
+**/test/fixtures/sensitive-data.json
+
+# Ferramentas de análise e monitoramento
+*.prof
+*.heap
+
+# Arquivos de memória e performance
+*.mem
+*.perf
+
+# Arquivos de depuração
+debug.log
+trace.log
+
+# Configurações específicas do ambiente
+.env.development
+.env.staging
+.env.production
+
+# Arquivos de configuração de servidores
+nginx.conf
+apache.conf
+.htaccess
+
+# Scripts de deploy sensíveis
+deploy.sh
+deploy.key
+deploy.pem
+
+# Arquivos de backup e restauração
+backup/
+restore/
+
+# Logs de acesso e erro
+access.log*
+error.log*
+combined.log*
+
+# Arquivos temporários de upload
+tmp/uploads/
+temp/uploads/
+
+# Cache de API e dados
+cache/
+.api-cache/
+
+# Segurança: Possíveis arquivos de configuração com senhas
+**/config.json
+**/secrets.json
+**/keys.json
+**/passwords.json
+
+# Arquivos de configuração de bancos de dados
+**/database.json
+**/db-config.json
+
+# Arquivos de configuração de email
+**/email-config.json
+**/smtp-config.json
+
+# Arquivos de configuração de pagamento
+**/stripe-config.json
+**/payment-config.json
+
+# Arquivos de configuração de terceiros
+**/third-party-config.json
+**/external-api-config.json
+
+# API Keys e arquivos de configuração sensíveis
+**/api-key*
+**/apikey*
+**/api-key.*
+**/apikey.*
+**/*api-key*
+**/*apikey*
+**/google-api-key*
+**/google-apikey*
+**/search-engine-id*
+**/cx-id*
+**/google-search-config*
+**/search-config*

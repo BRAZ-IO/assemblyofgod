@@ -256,6 +256,7 @@ const AISelector = () => {
             key={ai.id}
             active={selectedAI.id === ai.id}
             onClick={() => selectAI(ai)}
+            style={{ opacity: ai.status === 'offline' ? 0.6 : 1 }}
           >
             <AIIcon color={ai.color}>
               {ai.name.charAt(0)}

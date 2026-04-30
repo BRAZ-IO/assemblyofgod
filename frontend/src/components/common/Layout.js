@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Sidebar from '../layout/Sidebar';
+import SidebarPastoral from '../layout/SidebarPastoral';
 import ChatInterface from '../chat/ChatInterface';
 
 const LayoutContainer = styled.div`
@@ -65,7 +65,7 @@ const Layout = () => {
 
   return (
     <LayoutContainer>
-      <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
+      <SidebarPastoral isOpen={isSidebarOpen} onClose={closeSidebar} />
       <MainContent>
         <MenuButton onClick={toggleSidebar}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

@@ -200,7 +200,9 @@ const SettingsPage = () => {
     fontSize: 'medium',
     apiEndpoint: 'https://api.cortexai.com',
     maxTokens: 2048,
-    temperature: 0.7
+    temperature: 0.7,
+    googleApiKey: '',
+    googleCx: ''
   });
 
   const handleToggleChange = (key, value) => {
@@ -212,10 +214,27 @@ const SettingsPage = () => {
   };
 
   const handleSave = () => {
-    // Save settings to localStorage or API
+    // Salvar configurações no localStorage
+    localStorage.setItem('iaassembleiaddeus_settings', JSON.stringify(settings));
+    
+    // Atualizar credenciais do Google Search Service
+    if (settings.googleApiKey && settings.googleCx) {
+      const googleSearchService = require('../services/GoogleSearchService').default;
+      const service = new googleSearchService(settings.googleApiKey, settings.googleCx);
+      console.log('Google Search configurado:', service.getInfo());
+    }
+    
     console.log('Settings saved:', settings);
-    alert('Settings saved successfully!');
+    alert('Configurações salvas com sucesso!');
   };
+  
+  // Carregar configurações salvas
+  React.useEffect(() => {
+    const savedSettings = localStorage.getItem('iaassembleiaddeus_settings');
+    if (savedSettings) {
+      setSettings(JSON.parse(savedSettings));
+    }
+  }, []);
 
   return (
     <SettingsContainer>
@@ -334,6 +353,45 @@ const SettingsPage = () => {
                   value={settings.temperature}
                   onChange={(e) => handleInputChange('temperature', parseFloat(e.target.value))}
                 />
+              </SettingRow>
+            </SettingsGroup>
+          </SettingsSection>
+
+          <SettingsSection>
+            <SectionTitle>🔍 Google Search Integration</SectionTitle>
+            <SettingsGroup>
+              <SettingRow>
+                <SettingLabel>
+                  <div className="label-text">Google API Key</div>
+                  <div className="label-description">Chave da API do Google Custom Search</div>
+                </SettingLabel>
+                <TextInput 
+                  type="password"
+                  value={settings.googleApiKey}
+                  onChange={(e) => handleInputChange('googleApiKey', e.target.value)}
+                  placeholder="AIza..."
+                />
+              </SettingRow>
+              
+              <SettingRow>
+                <SettingLabel>
+                  <div className="label-text">Search Engine ID (CX)</div>
+                  <div className="label-description">ID do motor de busca do Google</div>
+                </SettingLabel>
+                <TextInput 
+                  type="password"
+                  value={settings.googleCx}
+                  onChange={(e) => handleInputChange('googleCx', e.target.value)}
+                  placeholder="012345678901..."
+                />
+              </SettingRow>
+              
+              <SettingRow>
+                <SettingLabel>
+                  <div className="label-description" style={{color: '#4ade80'}}>
+                    ✅ Pesquisa real no Google para respostas mais precisas
+                  </div>
+                </SettingLabel>
               </SettingRow>
             </SettingsGroup>
           </SettingsSection>

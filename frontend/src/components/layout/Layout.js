@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Sidebar from './Sidebar';
-import Navbar from './Navbar';
+import SidebarPastoral from './SidebarPastoral';
+import NavbarPremium from './NavbarPremium';
 
 const LayoutContainer = styled.div`
   display: flex;
@@ -18,19 +18,18 @@ const MainContent = styled.div`
   width: 100%;
   
   @media (min-width: 768px) {
-    margin-left: 260px;
+    margin-left: 240px;
   }
 `;
 
 const ContentArea = styled.div`
   flex: 1;
-  background-color: #343541;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   
-  /* Otimizações para mobile */
   @media (max-width: 767px) {
-    padding-bottom: 60px; /* Espaço para elementos fixos */
+    padding-bottom: 60px;
   }
 `;
 
@@ -47,9 +46,9 @@ const Layout = ({ children }) => {
 
   return (
     <LayoutContainer>
-      <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
+      <SidebarPastoral isOpen={isSidebarOpen} onClose={closeSidebar} />
       <MainContent>
-        <Navbar onMenuClick={toggleSidebar} />
+        <NavbarPremium onMenuClick={toggleSidebar} />
         <ContentArea>
           {children}
         </ContentArea>
