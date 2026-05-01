@@ -44,6 +44,11 @@ Thumbs.db
 .env.meta
 .env.mistral
 .env.xai
+.env.groq
+
+# Vercel
+.vercel
+.vercel.json
 
 # Logs
 npm-debug.log*

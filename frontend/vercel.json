@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "name": "ia-assembleia-de-deus",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "REACT_APP_GROQ_API_KEY": "@groq-api-key",
+    "REACT_APP_OPENAI_API_KEY": "@openai-api-key"
+  }
+}
