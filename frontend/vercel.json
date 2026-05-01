@@ -19,5 +19,8 @@
   "env": {
     "REACT_APP_GROQ_API_KEY": "@groq-api-key",
     "REACT_APP_OPENAI_API_KEY": "@openai-api-key"
-  }
+  },
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "installCommand": "npm install"
 }
