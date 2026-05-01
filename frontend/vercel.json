@@ -1,23 +1,5 @@
 {
-  "version": 2,
-  "name": "ia-assembleia-de-deus",
-  "buildCommand": "npm run build",
-  "outputDirectory": "build",
-  "installCommand": "npm install",
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ],
-  "env": {
-    "REACT_APP_GROQ_API_KEY": "@groq-api-key",
-    "REACT_APP_OPENAI_API_KEY": "@openai-api-key"
-  }
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
