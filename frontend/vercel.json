@@ -1,6 +1,7 @@
 {
-  "installCommand": "npm install",
-  "buildCommand": "npx react-scripts build",
+  "version": 2,
+  "framework": "create-react-app",
+  "buildCommand": "npm install && npm run build",
   "outputDirectory": "build",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
