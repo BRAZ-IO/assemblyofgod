@@ -1,15 +1,9 @@
 {
   "version": 2,
   "name": "ia-assembleia-de-deus",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "build"
-      }
-    }
-  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "installCommand": "npm install",
   "routes": [
     {
       "src": "/(.*)",
@@ -25,8 +19,5 @@
   "env": {
     "REACT_APP_GROQ_API_KEY": "@groq-api-key",
     "REACT_APP_OPENAI_API_KEY": "@openai-api-key"
-  },
-  "buildCommand": "npm run build",
-  "outputDirectory": "build",
-  "installCommand": "npm install"
+  }
 }
