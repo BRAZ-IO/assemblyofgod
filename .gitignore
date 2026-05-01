@@ -323,3 +323,12 @@ cache/
 **/cx-id*
 **/google-search-config*
 **/search-config*
+
+# Arquivos de teste com API keys
+test-*.js
+check-*.js
+
+# Arquivos .env
+.env
+.env.local
+.env.*.local

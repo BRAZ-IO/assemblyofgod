@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { useLocation, useParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import IAAssembleiaDeDeusEngine from '../../services/IAAssembleiaDeDeusEngine';
+import OpenAIService from '../../services/OpenAIService';
+import GroqService from '../../services/GroqService';
 
 const ChatContainer = styled.div`
   display: flex;
@@ -180,6 +182,84 @@ const EnrichedBadge = styled.div`
   font-size: 10px;
   font-weight: 700;
   box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  animation: pulse 2s infinite;
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+`;
+
+const OpenAIBadge = styled.div`
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, #10a37f, #00d4aa);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(16, 163, 127, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  animation: pulse 2s infinite;
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+`;
+
+const GroqBadge = styled.div`
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  animation: pulse 2s infinite;
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+`;
+
+const GroqSearchBadge = styled.div`
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, #f59e0b, #dc2626);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
   display: flex;
   align-items: center;
   gap: 4px;
@@ -383,6 +463,9 @@ const ChatInterface = () => {
   
   // Inicializar o motor de IA
   const [aiEngine] = useState(() => new IAAssembleiaDeDeusEngine());
+  const [useGroq, setUseGroq] = useState(() => {
+    return true; // Usar Groq por padrão
+  });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -497,18 +580,77 @@ const ChatInterface = () => {
     }, 1500);
 
     try {
-      // Simular tempo de processamento para parecer mais natural
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
       // Limpar interval de pensamento
       clearInterval(thinkingInterval);
       
       setIsThinking(false);
       setIsTyping(true);
       
-      // Usar o motor de IA personalizado
-      const context = messages.map(m => ({ message: m.text, role: m.sender }));
-      const aiResponse = await aiEngine.processMessage(inputText, context);
+      let aiResponse;
+      
+      // Tentar usar Groq primeiro, fallback para OpenAI, depois motor local
+      if (useGroq) {
+        try {
+          console.log('🚀 Usando Groq para processar mensagem...');
+          
+          // Verificar se é pedido específico de oração do dia
+          let groqResult;
+          if (inputText.toLowerCase().includes('oração do dia') || 
+              inputText.toLowerCase().includes('oracao do dia') ||
+              inputText.toLowerCase().includes('oração para hoje') ||
+              inputText.toLowerCase().includes('oracao para hoje')) {
+            console.log('🙏 Detectado pedido de oração do dia, usando método específico...');
+            groqResult = await GroqService.getDailyPrayer();
+          } else {
+            console.log('🔍 Usando Groq com busca no Google...');
+            groqResult = await GroqService.getSpiritualResponseWithSearch(inputText);
+          }
+          
+          if (groqResult.success) {
+            aiResponse = {
+              text: groqResult.response,
+              type: 'groq',
+              confidence: 0.95,
+              enriched: true,
+              model: groqResult.model,
+              searchPerformed: groqResult.searchPerformed || false
+            };
+            console.log('✅ Groq funcionou:', aiResponse);
+          } else {
+            throw new Error(groqResult.error);
+          }
+        } catch (groqError) {
+          console.log('❌ Groq falhou, tentando OpenAI:', groqError.message);
+          
+          // Tentar OpenAI como fallback
+          try {
+            const openaiResult = await OpenAIService.getSpiritualResponse(inputText);
+            
+            if (openaiResult.success) {
+              aiResponse = {
+                text: openaiResult.response,
+                type: 'openai',
+                confidence: 0.95,
+                enriched: true,
+                model: openaiResult.model
+              };
+              console.log('✅ OpenAI funcionou como fallback:', aiResponse);
+            } else {
+              throw new Error(openaiResult.error);
+            }
+          } catch (openaiError) {
+            console.log('❌ OpenAI também falhou, usando motor local:', openaiError.message);
+            
+            // Fallback final para motor local
+            const context = messages.map(m => ({ message: m.text, role: m.sender }));
+            aiResponse = await aiEngine.processMessage(inputText, context);
+          }
+        }
+      } else {
+        // Usar apenas motor local
+        const context = messages.map(m => ({ message: m.text, role: m.sender }));
+        aiResponse = await aiEngine.processMessage(inputText, context);
+      }
       
       // Criar mensagem de IA com streaming
       const responseMessage = {
@@ -519,6 +661,7 @@ const ChatInterface = () => {
         type: aiResponse.type,
         confidence: aiResponse.confidence,
         enriched: aiResponse.enriched || false,
+        model: aiResponse.model,
         isStreaming: true
       };
       
@@ -528,8 +671,11 @@ const ChatInterface = () => {
       await streamResponse(responseMessage.id, aiResponse.text);
       
       // Atualizar sugestões baseadas no contexto
-      const newSuggestions = aiEngine.generateSuggestions(context);
-      setSuggestions(newSuggestions);
+      if (!useGroq || (aiResponse.type !== 'groq' && aiResponse.type !== 'openai')) {
+        const context = messages.map(m => ({ message: m.text, role: m.sender }));
+        const newSuggestions = aiEngine.generateSuggestions(context);
+        setSuggestions(newSuggestions);
+      }
       
     } catch (error) {
       console.error('Erro no motor de IA:', error);
@@ -596,7 +742,34 @@ const ChatInterface = () => {
             className={message.sender === 'user' ? 'user-message' : 'ai-message'}
           >
             <MessageBubble $isUser={message.sender === 'user'}>
-              {message.enriched && (
+              {message.type === 'groq' && (
+                message.searchPerformed ? (
+                  <GroqSearchBadge>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                      <path d="M21 21l-6-6"></path>
+                    </svg>
+                      Groq + Google
+                  </GroqSearchBadge>
+                ) : (
+                  <GroqBadge>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                    </svg>
+                    Groq
+                  </GroqBadge>
+                )
+              )}
+              {message.type === 'openai' && (
+                <OpenAIBadge>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M9 12l2 2 4-4"></path>
+                    <circle cx="12" cy="12" r="10"></circle>
+                  </svg>
+                  OpenAI
+                </OpenAIBadge>
+              )}
+              {message.enriched && message.type !== 'groq' && message.type !== 'openai' && (
                 <EnrichedBadge>
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="11" cy="11" r="8"></circle>

@@ -14,6 +14,9 @@ import HymnsPage from './pages/HymnsPage';
 import PrayersPage from './pages/PrayersPage';
 import AIConfigPage from './pages/AIConfigPage';
 import WelcomePage from './pages/WelcomePage';
+import OpenAITest from './components/test/OpenAITest';
+import GroqTest from './components/test/GroqTest';
+import AIProviderPage from './pages/AIProviderPage';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -63,6 +66,9 @@ function App() {
             <Route path="research" element={<HomePage />} />
             <Route path="codex" element={<HomePage />} />
             <Route path="projects" element={<HomePage />} />
+            <Route path="test-openai" element={<OpenAITest />} />
+            <Route path="test-groq" element={<GroqTest />} />
+            <Route path="ai-provider" element={<AIProviderPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Layout>

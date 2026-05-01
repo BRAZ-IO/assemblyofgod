@@ -52,6 +52,11 @@ class IAAssembleiaDeDeusEngine {
           "Com certeza! Vamos resolver isso juntos.",
           "Sem problemas! Estou à disposição para te ajudar."
         ],
+        prayer: [
+          "Com certeza! Aqui está uma oração para hoje:\n\n'Pai Celestial, agradeço por mais um dia de vida. Peço tua direção, sabedoria e proteção. Que teu Espírito Santo me guie em todas as decisões. Fortalece minha fé e me ajuda a ser uma bênção para outros. Em nome de Jesus, amém.'\n\nQue Deus te abençoe hoje!",
+          "Vamos orar juntos! 🙏\n\n'Senhor Deus, te entrego este dia. Peço que tua paz habite em meu coração. Guia meus passos, ilumina minha mente e purifica minhas intenções. Que eu possa refletir teu amor em tudo que fizer. Em nome de Jesus, amém.'\n\nGraça e paz!",
+          "Uma oração poderosa para seu dia:\n\n'Pai amado, clamo a ti neste momento. Renova minhas forças, restaura minha esperança e enche meu coração de tua presença. Que cada hora deste dia seja dedicada a ti. Usa-me como instrumento de tuas bênçãos. Amém!'\n\nDeus está contigo!"
+        ],
         creative: [
           "Adoro ideias criativas! Vamos explorar isso juntos.",
           "Excelente! Vamos desenvolver essa ideia.",
@@ -114,7 +119,6 @@ class IAAssembleiaDeDeusEngine {
     try {
       // Classificar tipo de mensagem
       const type = await this.nlpService.classifyIntent(message);
-      console.log(`🔍 Tipo de mensagem: ${type}`);
       
       // Analisar sentimento
       const sentiment = await this.nlpService.analyzeSentiment(message);
@@ -130,11 +134,9 @@ class IAAssembleiaDeDeusEngine {
       
       // Enriquecer se for mensagem curta ou tiver contexto religioso
       const shouldEnrich = message.length < 50 || religiousTopic || keywords.religious.length > 0;
-      console.log(`🔍 Vai enriquecer? ${shouldEnrich}`);
       
       if (shouldEnrich) {
-        console.log('🔍 Enriquecendo resposta com contexto religioso via API...');
-        // Usar API Gemini para enriquecer (economizando API)
+        // Usar NLP local para enriquecer
         const enrichedResponse = await this.nlpService.generateNaturalResponse(baseResponse, message);
         
         // Adicionar follow-up se apropriado
@@ -315,6 +317,9 @@ class IAAssembleiaDeDeusEngine {
         'Que a paz de Cristo guarde seu coração! Como servo do Senhor, estou à sua disposição pastoral.'
       ],
       prayer: [
+        'Com certeza! Aqui está uma oração para hoje:\n\n"Pai Celestial, agradeço por mais um dia de vida. Peço tua direção, sabedoria e proteção. Que teu Espírito Santo me guie em todas as decisões. Fortalece minha fé e me ajuda a ser uma bênção para outros. Em nome de Jesus, amém."\n\nQue Deus te abençoe hoje!',
+        'Vamos orar juntos! 🙏\n\n"Senhor Deus, te entrego este dia. Peço que tua paz habite em meu coração. Guia meus passos, ilumina minha mente e purifica minhas intenções. Que eu possa refletir teu amor em tudo que fizer. Em nome de Jesus, amém."\n\nGraça e paz!',
+        'Uma oração poderosa para seu dia:\n\n"Pai amado, clamo a ti neste momento. Renova minhas forças, restaura minha esperança e enche meu coração de tua presença. Que cada hora deste dia seja dedicada a ti. Usa-me como instrumento de tuas bênçãos. Amém!"\n\nDeus está contigo!',
         'Como seu pastor, me ajoelho com você em oração! Vamos juntos ao trono da graça.',
         'Amém! Que privilégio interceder por suas ovelhas! Ministeremos ao Pai agora mesmo.',
         'Paz do Senhor! A oração pastoral move o coração de Deus. Vamos clamar juntos!',

@@ -65,4 +65,4 @@ class GeminiAPIService {
   }
 }
 
-export default new GeminiAPIService();
+export default GeminiAPIService;

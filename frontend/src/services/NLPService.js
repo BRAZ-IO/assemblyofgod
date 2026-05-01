@@ -4,25 +4,20 @@
  * Utiliza ReligiousAPIService para análise avançada com fallback local
  */
 
-import GeminiAPIService from './GeminiAPIService';
 import Sentiment from 'sentiment';
 
 class NLPService {
   constructor() {
-    // Inicializar API Gemini
-    this.geminiService = new GeminiAPIService();
+    // Inicializar sentiment analysis
     this.sentiment = new Sentiment();
     
-    // Flag para controlar uso da API
-    this.useAPI = true;
-    
-    // Verificar disponibilidade da API
-    this.checkAPIAvailability();
+    // Flag para controlar uso da API OpenAI
+    this.useAPI = false; // Desativado por enquanto
     
     // Classificador simples de intenções religiosas
     this.intentPatterns = {
       greeting: /^(oi|olá|hello|hi|hey|bom dia|boa tarde|boa noite|tudo bem|como está|como vai|paz do senhor|graça e paz)/i,
-      prayer: /^(orar|oração|ore|orei|preciso orar|vamos orar|interceder|intercessão)/i,
+      prayer: /^(oração|orar|ore|orei|preciso orar|vamos orar|interceder|intercessão|oracao|dia|ajudar|oracao do dia)/i,
       bible: /^(bíblia|biblia|versículo|versiculo|palavra|deus|jesus|senhor|espirito santo|livro|capítulo|capitulo)/i,
       praise: /^(aleluia|glória a deus|gloŕia|louvado seja|amém|louvor|adorar|adoração|cântico|cantico|hino)/i,
       question: /^(o que|como|onde|quando|por que|qual|qual é|quem|será que|explique|por favor)/i,
@@ -113,51 +108,36 @@ class NLPService {
 
   
   /**
-   * Verifica se API está disponível (com timeout e fallback)
+   * Verifica se API OpenAI está disponível
    */
   async checkAPIAvailability() {
-    // Assumir que API está disponível por padrão (chave configurada)
-    this.useAPI = true;
-    console.log('Usando Google Gemini API (chave configurada)');
-    
-    // Teste assíncrono em background
-    this.testAPIInBackground();
-  }
-  
-  /**
-   * Testa API em background sem bloquear inicialização
-   */
-  async testAPIInBackground() {
-    try {
-      const isAvailable = await this.geminiService.isAvailable();
-      if (!isAvailable) {
-        console.log('API Gemini não disponível, usando fallback local');
-        this.useAPI = false;
-      } else {
-        console.log('API Gemini funcionando normalmente!');
-      }
-    } catch (error) {
-      console.log('Erro ao testar API Gemini, continuando com fallback local');
-      this.useAPI = false;
-    }
+    // Por enquanto usando apenas sistema local
+    this.useAPI = false;
+    console.log('Usando sistema local de NLP');
   }
 
   /**
-   * Classifica a intenção da mensagem (usando Gemini ou fallback)
+   * Classifica a intenção da mensagem (usando sistema local)
    */
   async classifyIntent(message) {
-    if (this.useAPI) {
-      try {
-        const analysis = await this.geminiService.analyzeMessage(message);
-        return analysis.intent || 'general';
-      } catch (error) {
-        console.log('Falha na API Gemini, usando fallback local');
-        this.useAPI = false;
-      }
+    // Sistema local
+    const lowerMessage = message.toLowerCase();
+    
+    // Verificação específica para ajuda primeiro, mas só se não tiver oração
+    if ((lowerMessage.includes('ajuda') || lowerMessage.includes('ajudar')) && 
+        !lowerMessage.includes('oração') && !lowerMessage.includes('oracao') && !lowerMessage.includes('orar')) {
+      return 'help';
     }
     
-    // Fallback local
-    const lowerMessage = message.toLowerCase();
+    // Verificação específica para oração (prioridade máxima - sobrescreve ajuda)
+    if (lowerMessage.includes('oração') || lowerMessage.includes('oracao') || lowerMessage.includes('orar')) {
+      return 'prayer';
+    }
+    
+    // Verificação específica para oração do dia
+    if (lowerMessage.includes('oracao do dia') || lowerMessage.includes('oração do dia')) {
+      return 'prayer';
+    }
     
     for (const [intent, pattern] of Object.entries(this.intentPatterns)) {
       if (pattern.test(lowerMessage)) {
@@ -169,29 +149,10 @@ class NLPService {
   }
 
   /**
-   * Analisa o sentimento da mensagem (usando Gemini ou fallback)
+   * Analisa o sentimento da mensagem (usando sistema local)
    */
   async analyzeSentiment(message) {
-    if (this.useAPI) {
-      try {
-        const analysis = await this.geminiService.analyzeMessage(message);
-        const sentiment = analysis.sentiment || { score: 0, label: 'neutral' };
-        return {
-          score: sentiment.score || 0,
-          comparative: sentiment.score || 0,
-          positive: sentiment.label === 'positive',
-          negative: sentiment.label === 'negative',
-          neutral: sentiment.label === 'neutral',
-          confidence: Math.abs(sentiment.score || 0),
-          tokens: [],
-          words: []
-        };
-      } catch (error) {
-        console.log('Falha na API Gemini de sentimento, usando fallback local');
-      }
-    }
-    
-    // Fallback local com sentiment
+    // Sistema local com sentiment
     const result = this.sentiment.analyze(message);
     
     return {
@@ -207,26 +168,10 @@ class NLPService {
   }
 
   /**
-   * Extrai palavras-chave relevantes (usando Gemini ou fallback)
+   * Extrai palavras-chave relevantes (usando sistema local)
    */
   async extractKeywords(message) {
-    if (this.useAPI) {
-      try {
-        const analysis = await this.geminiService.analyzeMessage(message);
-        return {
-          topics: [],
-          nouns: [],
-          verbs: [],
-          adjectives: [],
-          religious: analysis.keywords || [],
-          all: analysis.keywords || []
-        };
-      } catch (error) {
-        console.log('Falha na API Gemini de keywords, usando fallback local');
-      }
-    }
-    
-    // Fallback local - palavras-chave religiosas
+    // Sistema local - palavras-chave religiosas
     const religiousKeywords = ['deus', 'jesus', 'senhor', 'espirito santo', 'bíblia', 'biblia',
                               'oração', 'orar', 'louvor', 'aleluia', 'amém', 'igreja',
                               'fé', 'esperança', 'amor', 'paz', 'benção', 'bênção',
@@ -248,29 +193,10 @@ class NLPService {
   }
 
   /**
-   * Extrai entidades (usando Gemini ou fallback)
+   * Extrai entidades (usando sistema local)
    */
   async extractEntities(message) {
-    if (this.useAPI) {
-      try {
-        const analysis = await this.geminiService.analyzeMessage(message);
-        return {
-          people: [],
-          places: [],
-          organizations: [],
-          dates: [],
-          money: [],
-          phoneNumbers: [],
-          emails: [],
-          urls: [],
-          biblical: [] // Gemini já inclui na análise
-        };
-      } catch (error) {
-        console.log('Falha na API Gemini de entidades, usando fallback local');
-      }
-    }
-    
-    // Fallback local - entidades básicas
+    // Sistema local - entidades básicas
     return {
       people: [],
       places: [],
@@ -375,21 +301,10 @@ class NLPService {
   }
 
   /**
-   * Gera resposta mais natural (usando Gemini ou sistema local)
+   * Gera resposta mais natural (usando sistema local)
    */
   async generateNaturalResponse(baseResponse, userMessage) {
-    if (this.useAPI) {
-      try {
-        // Usar Gemini para gerar resposta mais natural
-        const geminiResponse = await this.geminiService.generateSpiritualResponse(userMessage);
-        return geminiResponse;
-      } catch (error) {
-        console.log('Falha na API Gemini, usando sistema local');
-        this.useAPI = false;
-      }
-    }
-    
-    // Sistema local (mantido como fallback)
+    // Sistema local
     const sentiment = await this.analyzeSentiment(userMessage);
     const intent = await this.classifyIntent(userMessage);
     const religiousTopic = this.detectReligiousTopic(userMessage);
@@ -433,21 +348,10 @@ class NLPService {
   }
 
   /**
-   * Retorna versículo bíblico (usando Gemini ou fallback)
+   * Retorna versículo bíblico (usando sistema local)
    */
   async getBibleVerse(topic) {
-    if (this.useAPI) {
-      try {
-        const verse = await this.geminiService.getBibleVerse(topic);
-        if (verse) {
-          return verse;
-        }
-      } catch (error) {
-        console.log('Falha na API Gemini de versículos, usando fallback local');
-      }
-    }
-    
-    // Fallback local
+    // Sistema local
     const topicMapping = {
       prayer: 'comfort',
       faith: 'strength',
@@ -548,17 +452,17 @@ class NLPService {
   }
 
   /**
-   * Retorna informações sobre o serviço religioso com API
+   * Retorna informações sobre o serviço religioso
    */
   getInfo() {
     return {
       name: 'NLP Service - IA Assembleia de Deus',
       version: '5.0.0',
-      type: 'Religious AI (Google Gemini + Fallback)',
-      libraries: ['sentiment', 'GeminiAPIService'],
+      type: 'Religious AI (Local System)',
+      libraries: ['sentiment'],
       focus: 'Religious/Spiritual Context',
       useAPI: this.useAPI,
-      apiAvailable: false, // Verificação assíncrona não disponível neste contexto
+      apiAvailable: false,
       capabilities: [
         'sentiment_analysis',
         'intent_classification',
@@ -570,7 +474,6 @@ class NLPService {
         'empathy_adaptation',
         'prayer_support',
         'biblical_guidance',
-        'api_integration',
         'fallback_support'
       ]
     };
